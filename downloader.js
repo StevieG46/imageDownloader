@@ -24,8 +24,17 @@ function donwloadPokemonPicture(targetID = getRandomPokemonId()){
         try {
                     //Step 1 get iamge url
             let newUrl = await getPokemonPictureUrl(targetID);
+
+            // Step1b get pokemon name
+            let pokemonName = await fetch("https://pokeapi.co/api/v2/pokemon/" + targetID).then(async (response) => {
+                return await response.json();
+            }).then(json => {
+                return json.name;
+            })
             // Step 2 do the download
-            let savedFileLocation = await savingPokemonPictureToDisk(newUrl, "ExampleImabge.png", "storage")
+            let savedFileLocation = await savingPokemonPictureToDisk(newUrl, `${pokemonName}-${targetID}.png`, "storage");
+            //return
+            resolve(savedFileLocation)
 
         } catch (error) {
             reject(error);
@@ -35,33 +44,33 @@ function donwloadPokemonPicture(targetID = getRandomPokemonId()){
 
 // Generate a random number or use a user provided number
 function getRandomPokemonId(){
-    return Matgh.floor(Math.random() * 1010) + 1
+    return Math.floor(Math.random() * 1010) + 1
 }
 
 // Retrieve pokemon data for that number
 // Retrieve the image URL from that pokemon Data
 async function getPokemonPictureUrl(targetId = getRandomPokemonId()){
-    
-    // Retrieve the API data
-    let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + targetId).catch(error => {
-        throw new Error("API failure.");
-    });
 
-    if (response.status == "404") {
-        throw new Error("API did not ahve data for the requested ID.");
-    }
+	// Retrieve the API data
+	let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + targetId).catch(error => {
+		throw new Error("API failure.");
+	});
 
-    // Convert the response int o usable JSON
-    let data = await response.json().catch(error => {
-        throw new Error("API did not return valid JSON.");
-    });
+	if (response.status == "404"){
+		throw new Error("API did not have data for the requested ID.");
+	}
 
-        // Not optimised, it makes unnessary vairalsbs
-    // let imageUrl = data.sprites.other["official-artwork"].front_shiny; //default
-    // return imageUrl;
+	// Convert the response into usable JSON 
+	let data = await response.json().catch(error => {
+		throw new Error("API did not return valid JSON.");
+	}); 
 
-    // Optimsed, no extra junk vairables
-    return data.sprites.other["offical-artwork"].fron_shiny;
+	// Not optimised, it makes unnecessary variables
+	// let imageUrl = data.sprites.other["official-artwork"].front_default;
+	// return imageUrl;
+
+	// More-optimised, no extra junk variables
+	return data.sprites.other["official-artwork"].front_default;
 }
 
 // Download that Image and save it to the computer
@@ -87,7 +96,7 @@ async function savingPokemonPictureToDisk(targetUrl, targetDownloadFilename, tar
     let fileDownloadStream = fs.createWriteStream(fullFileDestination);
 
     // Get data as bytes from the web request --- pipe the bytes into the hard drive
-    await finished(Readable.fromWeb(imageData.body)).pipe(fileDownloadStream).catch(error => {
+    await finished(Readable.fromWeb(imageData.body).pipe(fileDownloadStream)).catch(error => {
         throw new Error("Failed to save content to disk.")
     });
 
