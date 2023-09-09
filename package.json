@@ -4,7 +4,7 @@
   "description": "This is a node project make sure we ignore node modules",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node index.js"
   },
   "keywords": [],
