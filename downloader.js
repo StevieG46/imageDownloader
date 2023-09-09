@@ -79,10 +79,10 @@ async function savingPokemonPictureToDisk(targetUrl, targetDownloadFilename, tar
     // Get data as bytes from the web request --- pipe the bytes into the hard drive
     await finished(Readable.fromWeb(imageData.body)).pipe(fileDownloadStream).catch(error => {
         throw new Error("Failed to save content to disk.")
-    })
+    });
 
 // Return the saved image location
-
+    return fullFileDestination;
 
 }
 
