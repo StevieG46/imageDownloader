@@ -20,7 +20,17 @@ const {finished} = require("node:stream/promises");
 const path = require("node:path");
 
 function donwloadPokemonPicture(targetID = getRandomPokemonId()){
+    return new Promise(async (resolve, reject) => {
+        try {
+                    //Step 1 get iamge url
+            let newUrl = await getPokemonPictureUrl(targetID);
+            // Step 2 do the download
+            let savedFileLocation = await savingPokemonPictureToDisk(newUrl, "ExampleImabge.png", "storage")
 
+        } catch (error) {
+            reject(error);
+        }
+    });
 }
 
 // Generate a random number or use a user provided number
