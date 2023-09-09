@@ -31,6 +31,27 @@ function getRandomPokemonId(){
 // Retrieve pokemon data for that number
 // Retrieve the image URL from that pokemon Data
 async function getPokemonPictureUrl(targetId = getRandomPokemonId()){
+    
+    // Retrieve the API data
+    let response = await fetch("https://pokeapi.co/api/v2/pokemon/" + targetId).catch(error => {
+        throw new Error("API failure.");
+    });
+
+    if (response.status == "404") {
+        throw new Error("API did not ahve data for the requested ID.");
+    }
+
+    // Convert the response int o usable JSON
+    let data = await response.json().catch(error => {
+        throw new Error("API did not return valid JSON.");
+    });
+
+        // Not optimised, it makes unnessary vairalsbs
+    // let imageUrl = data.sprites.other["official-artwork"].front_shiny; //default
+    // return imageUrl;
+
+    // Optimsed, no extra junk vairables
+    return data.sprites.other["offical-artwork"].fron_shiny;
 
 }
 
